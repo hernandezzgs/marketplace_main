@@ -1,6 +1,11 @@
 from django.shortcuts import render
+from django.contrib.auth import logout 
+
 from .models import Item, Category
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+
+from .forms import SingnupForm
+
 # Create your views here.
 def home(request):
     items = Item.objects.filter(is_sold=False)
@@ -30,3 +35,19 @@ def detail(request, pk):
     }
 
     return render(request, 'store/item.html', context)
+
+def register(request):
+    if request.method == 'POST':
+        form = SingnupForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+        else:
+            form =SingnupForm()
+
+            contex = {
+                'form' : form
+            }
+
+            return render(request, 'store/singup.html', context)
